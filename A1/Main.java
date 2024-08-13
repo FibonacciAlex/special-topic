@@ -1,8 +1,9 @@
+import javax.sound.midi.Soundbank;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @Author Shanco Zhao
+ * @Author Shance Zhao
  * @StudentID 24013122
  */
 public class Main {
@@ -13,8 +14,8 @@ public class Main {
     //lecturers data
     protected static Map<String, Lecturer> LECTURES = new HashMap<>();
 
-    //lecture and course data, key=LectureID,value=<DeliverType, course>
-    protected static Map<String, Map<Campus,Course>> courseMatchData = new HashMap<>();
+    //lecture and course data, key=LectureID,value=<courseId, Campus>
+    protected static Map<String, List<CampusMatchKey>> courseMatchData = new HashMap<>();
 
 
     protected static Map<CampusMatchKey, Lecturer> lecturerMatchData = new HashMap<>();
@@ -50,9 +51,7 @@ public class Main {
     public static void main(String[] args){
         // System init
         List<AbsTask> list = initSystem();
-        list.forEach(i->{
-            i.run();
-        });
+        list.forEach(AbsTask::run);
     }
 
     public static List<AbsTask> initSystem(){
@@ -70,7 +69,7 @@ public class Main {
 
     public static String formatMajor2Str(List<Major> majors){
         StringBuilder ms = new StringBuilder("(");
-        majors.stream().forEach(i->ms.append(i).append(" "));
+        majors.forEach(i->ms.append(i).append(" "));
         ms.append(")");
         return ms.toString();
     }
@@ -221,43 +220,35 @@ class Lecturer{
  */
 class CampusMatchKey{
 
-    private String courseNumber;
+    private Course course;
 
     private Campus campus;
 
-    public CampusMatchKey(String courseNumber, Campus campus) {
-        this.courseNumber = courseNumber;
+    public CampusMatchKey(Course course, Campus campus) {
+        this.course = course;
         this.campus = campus;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public Campus getCampus() {
+        return campus;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CampusMatchKey that = (CampusMatchKey) o;
+        return Objects.equals(course, that.course) && campus == that.campus;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((courseNumber == null) ? 0 : courseNumber.hashCode());
-        result = prime * result + ((campus == null) ? 0 : campus.hashCode());
-        return result;
+        return Objects.hash(course, campus);
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        CampusMatchKey other = (CampusMatchKey) obj;
-        if (courseNumber == null) {
-            if (other.courseNumber != null)
-                return false;
-        } else if (!courseNumber.equals(other.courseNumber))
-            return false;
-        if (campus != other.campus)
-            return false;
-        return true;
-    }
-
 }
 
 /**
@@ -317,7 +308,7 @@ class Task3 extends AbsTask{
     @Override
     void run() {
         info();
-        List<Course> list = Main.COURSES.stream().filter(i -> i.getMajors().contains(major)).collect(Collectors.toList());
+        List<Course> list = Main.COURSES.stream().filter(i -> i.getMajors().contains(major)).toList();
         list.forEach(i->{
             System.out.println(i.toString2());
         });
@@ -334,7 +325,7 @@ class Task4 extends AbsTask{
     @Override
     void run() {
         info();
-        List<Course> list = Main.COURSES.stream().filter(i -> i.getExam() > 0).collect(Collectors.toList());
+        List<Course> list = Main.COURSES.stream().filter(i -> i.getExam() > 0).toList();
         list.forEach(i->{
             System.out.println(i.toString2());
         });
@@ -351,7 +342,7 @@ class Task5 extends AbsTask{
     @Override
     void run() {
         info();
-        List<Course> list = Main.COURSES.stream().filter(i -> i.getAssignments() > 50).collect(Collectors.toList());
+        List<Course> list = Main.COURSES.stream().filter(i -> i.getAssignments() > 50).toList();
         list.forEach(i->{
             System.out.println(i.toString2());
         });
@@ -370,38 +361,38 @@ class Task6 extends AbsTask{
     @Override
     void run() {
         info();
+        List<String> lecturers = new ArrayList<>(Main.LECTURES.keySet());
         Main.COURSES.forEach(i->{
-            List<String> lecturers = Main.LECTURES.keySet().stream().collect(Collectors.toList());
-
             Random random = new Random();
-            for (Campus deliverType : Campus.values()) {
+            for (Campus campus : Campus.values()) {
 
                 while (true) {
                     int index = random.nextInt(lecturers.size());
                     String lid = lecturers.get(index);
                     //check how many courses of this lecturer teaching now
-                    Map<Campus, Course> courseofLecturer = Main.courseMatchData.get(lid);
+                    List<CampusMatchKey> courseofLecturer = Main.courseMatchData.get(lid);
                     if (courseofLecturer == null) {
-                        courseofLecturer = new HashMap<>();
+                        courseofLecturer = new ArrayList<>();
                     }
                     //check if this is in campus course and match the lecturer's campus
                     Lecturer lecturer = Main.LECTURES.get(lid);
-                    if (!deliverType.equals(Campus.DISTANCE) && !lecturer.getCampus().equals(deliverType)) {
+                    if (!campus.equals(Campus.DISTANCE) && !lecturer.getCampus().equals(campus)) {
                         //random again
                         continue;
                     }
-                    courseofLecturer.put(deliverType, i);
+                    CampusMatchKey campusMatchKey = new CampusMatchKey(i, campus);
+                    courseofLecturer.add(campusMatchKey);
 
                     //save matching data
                     Main.courseMatchData.put(lid, courseofLecturer);
-                    Main.lecturerMatchData.put(new CampusMatchKey(i.getNumber(), deliverType), lecturer);
-                    
-                    System.out.println(i.getNumber()+" "+ deliverType.getCampusName() + " "+lecturer.getName());
+                    Main.lecturerMatchData.put(campusMatchKey, lecturer);
+
+                    System.out.println(i.getNumber()+" "+ campus.getCampusName() + " "+lecturer.getName());
 
                     if (courseofLecturer.size() >= 4) {
                         //this lecturer can not accept courses anymore
                         lecturers.remove(index);
-                        System.out.println("----------remove lecturer id+"+lid+"----index:"+index+"--remain length+"+lecturers.size());
+//                        System.out.println("----------remove lecturer id+"+lid+"----index:"+index+"--remain length+"+lecturers.size());
                     }
                     break;
                 }
@@ -423,13 +414,13 @@ class Task7 extends AbsTask{
     @Override
     void run() {
         info();
-        Map<Campus, Course> map = Main.courseMatchData.get(myID);
+        List<CampusMatchKey> campusMatchKeys = Main.courseMatchData.get(myID);
         Lecturer lecturer = Main.LECTURES.get(myID);
-        if(map!= null){
-            map.forEach((deliverType, course) -> {
-                System.out.println("Paper Offering -  " + course.getCourseName() + "    "+ deliverType.getCampusName() + "    Lecturer: " + lecturer.getName());
+        if(campusMatchKeys!= null){
+            campusMatchKeys.forEach((key) -> {
+                System.out.println("Paper Offering -  " + key.getCourse().getCourseName() + "    "+ key.getCampus().getCampusName() + "    Lecturer: " + lecturer.getName());
             });
-            System.out.println("I am teaching "+ map.size()+" paper(s)");
+            System.out.println("I am teaching "+ campusMatchKeys.size()+" paper(s)");
         }
     }
 }
@@ -450,9 +441,11 @@ class Task8 extends AbsTask{
     void run() {
         info();
         //use target courseNumber to find in campus teaching lecturer
-        Lecturer lecturer = Main.lecturerMatchData.get(new CampusMatchKey(courseNumber, campus));
+        Optional<Course> optional = Main.COURSES.stream().filter(i -> i.getNumber().equals(courseNumber)).findFirst();
+        Course course = optional.orElseThrow();
+        Lecturer lecturer = Main.lecturerMatchData.get(new CampusMatchKey(course, campus));
         System.out.println("Lecturer's Name: " + lecturer.getName());
-        Map<Campus, Course> map = Main.courseMatchData.get(lecturer.getId());
-        System.out.println("This lecturer is teaching "+ map.keySet().size()+" paper(s)");
+        List<CampusMatchKey> keyList = Main.courseMatchData.get(lecturer.getId());
+        System.out.println("This lecturer is teaching "+ keyList.size()+" paper(s)");
     }
 }
