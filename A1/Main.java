@@ -1,4 +1,3 @@
-import javax.sound.midi.Soundbank;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -171,7 +170,7 @@ enum Campus{
     AUCKLAND("Auckland"),
     PN      ("PN      ");
 
-    private String campusName;
+    private final String campusName;
 
     public String getCampusName() {
         return campusName;
@@ -290,9 +289,7 @@ class Task2 extends AbsTask{
     @Override
     void run() {
         info();
-        Main.COURSES.stream().forEach(i->{
-            System.out.println(i.toString());
-        });
+        Main.COURSES.forEach(i-> System.out.println(i.toString()));
     }
 }
 
@@ -309,9 +306,7 @@ class Task3 extends AbsTask{
     void run() {
         info();
         List<Course> list = Main.COURSES.stream().filter(i -> i.getMajors().contains(major)).toList();
-        list.forEach(i->{
-            System.out.println(i.toString2());
-        });
+        list.forEach(i-> System.out.println(i.toString2()));
         System.out.println("Total matching papers in specified Major - "+ major+" :"+ list.size());
     }
 }
@@ -326,9 +321,7 @@ class Task4 extends AbsTask{
     void run() {
         info();
         List<Course> list = Main.COURSES.stream().filter(i -> i.getExam() > 0).toList();
-        list.forEach(i->{
-            System.out.println(i.toString2());
-        });
+        list.forEach(i-> System.out.println(i.toString2()));
         System.out.println("Total number of papers that have exam: "+ list.size());
     }
 }
@@ -343,9 +336,7 @@ class Task5 extends AbsTask{
     void run() {
         info();
         List<Course> list = Main.COURSES.stream().filter(i -> i.getAssignments() > 50).toList();
-        list.forEach(i->{
-            System.out.println(i.toString2());
-        });
+        list.forEach(i-> System.out.println(i.toString2()));
         System.out.println("Total number of papers that have assignments weighted more than 50%: "+ list.size());
     }
 }
@@ -417,9 +408,7 @@ class Task7 extends AbsTask{
         List<CampusMatchKey> campusMatchKeys = Main.courseMatchData.get(myID);
         Lecturer lecturer = Main.LECTURES.get(myID);
         if(campusMatchKeys!= null){
-            campusMatchKeys.forEach((key) -> {
-                System.out.println("Paper Offering -  " + key.getCourse().getCourseName() + "    "+ key.getCampus().getCampusName() + "    Lecturer: " + lecturer.getName());
-            });
+            campusMatchKeys.forEach((key) -> System.out.println("Paper Offering -  " + key.getCourse().getCourseName() + "    "+ key.getCampus().getCampusName() + "    Lecturer: " + lecturer.getName()));
             System.out.println("I am teaching "+ campusMatchKeys.size()+" paper(s)");
         }
     }
