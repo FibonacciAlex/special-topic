@@ -102,9 +102,7 @@ public class AssignmentTwoMain {
                 end = true;
             }
 
-            if(pre == null){// The first node
-                pre = newNode;
-            }else {
+            if(pre != null){// not the first node
                 pre.next = newNode;
             }
             pre = newNode;
