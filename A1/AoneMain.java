@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
  * @Author Shance Zhao
  * @StudentID 24013122
  */
-public class Main {
+public class AoneMain {
 
     // course data
     protected static List<Course> COURSES = new ArrayList<>();
@@ -121,7 +121,7 @@ class Course{
 
     @Override
     public String toString() {
-        return number +" " + courseName+ " "+Main.formatMajor2Str(majors);
+        return number +" " + courseName+ " "+ AoneMain.formatMajor2Str(majors);
     }
 
     public String toString2(){
@@ -289,7 +289,7 @@ class Task2 extends AbsTask{
     @Override
     void run() {
         info();
-        Main.COURSES.forEach(i-> System.out.println(i.toString()));
+        AoneMain.COURSES.forEach(i-> System.out.println(i.toString()));
     }
 }
 
@@ -305,7 +305,7 @@ class Task3 extends AbsTask{
     @Override
     void run() {
         info();
-        List<Course> list = Main.COURSES.stream().filter(i -> i.getMajors().contains(major)).toList();
+        List<Course> list = AoneMain.COURSES.stream().filter(i -> i.getMajors().contains(major)).toList();
         list.forEach(i-> System.out.println(i.toString2()));
         System.out.println("Total matching papers in specified Major - "+ major+" :"+ list.size());
     }
@@ -320,7 +320,7 @@ class Task4 extends AbsTask{
     @Override
     void run() {
         info();
-        List<Course> list = Main.COURSES.stream().filter(i -> i.getExam() > 0).toList();
+        List<Course> list = AoneMain.COURSES.stream().filter(i -> i.getExam() > 0).toList();
         list.forEach(i-> System.out.println(i.toString2()));
         System.out.println("Total number of papers that have exam: "+ list.size());
     }
@@ -335,7 +335,7 @@ class Task5 extends AbsTask{
     @Override
     void run() {
         info();
-        List<Course> list = Main.COURSES.stream().filter(i -> i.getAssignments() > 50).toList();
+        List<Course> list = AoneMain.COURSES.stream().filter(i -> i.getAssignments() > 50).toList();
         list.forEach(i-> System.out.println(i.toString2()));
         System.out.println("Total number of papers that have assignments weighted more than 50%: "+ list.size());
     }
@@ -352,8 +352,8 @@ class Task6 extends AbsTask{
     @Override
     void run() {
         info();
-        List<String> lecturers = new ArrayList<>(Main.LECTURES.keySet());
-        Main.COURSES.forEach(i->{
+        List<String> lecturers = new ArrayList<>(AoneMain.LECTURES.keySet());
+        AoneMain.COURSES.forEach(i->{
             Random random = new Random();
             for (Campus campus : Campus.values()) {
 
@@ -361,12 +361,12 @@ class Task6 extends AbsTask{
                     int index = random.nextInt(lecturers.size());
                     String lid = lecturers.get(index);
                     //check how many courses of this lecturer teaching now
-                    List<CampusMatchKey> courseofLecturer = Main.courseMatchData.get(lid);
+                    List<CampusMatchKey> courseofLecturer = AoneMain.courseMatchData.get(lid);
                     if (courseofLecturer == null) {
                         courseofLecturer = new ArrayList<>();
                     }
                     //check if this is in campus course and match the lecturer's campus
-                    Lecturer lecturer = Main.LECTURES.get(lid);
+                    Lecturer lecturer = AoneMain.LECTURES.get(lid);
                     if (!campus.equals(Campus.DISTANCE) && !lecturer.getCampus().equals(campus)) {
                         //random again
                         continue;
@@ -375,8 +375,8 @@ class Task6 extends AbsTask{
                     courseofLecturer.add(campusMatchKey);
 
                     //save matching data
-                    Main.courseMatchData.put(lid, courseofLecturer);
-                    Main.lecturerMatchData.put(campusMatchKey, lecturer);
+                    AoneMain.courseMatchData.put(lid, courseofLecturer);
+                    AoneMain.lecturerMatchData.put(campusMatchKey, lecturer);
 
                     System.out.println(i.getNumber()+" "+ campus.getCampusName() + " "+lecturer.getName());
 
@@ -405,8 +405,8 @@ class Task7 extends AbsTask{
     @Override
     void run() {
         info();
-        List<CampusMatchKey> campusMatchKeys = Main.courseMatchData.get(myID);
-        Lecturer lecturer = Main.LECTURES.get(myID);
+        List<CampusMatchKey> campusMatchKeys = AoneMain.courseMatchData.get(myID);
+        Lecturer lecturer = AoneMain.LECTURES.get(myID);
         if(campusMatchKeys!= null){
             campusMatchKeys.forEach((key) -> System.out.println("Paper Offering -  " + key.getCourse().getCourseName() + "    "+ key.getCampus().getCampusName() + "    Lecturer: " + lecturer.getName()));
             System.out.println("I am teaching "+ campusMatchKeys.size()+" paper(s)");
@@ -430,11 +430,11 @@ class Task8 extends AbsTask{
     void run() {
         info();
         //use target courseNumber to find in campus teaching lecturer
-        Optional<Course> optional = Main.COURSES.stream().filter(i -> i.getNumber().equals(courseNumber)).findFirst();
+        Optional<Course> optional = AoneMain.COURSES.stream().filter(i -> i.getNumber().equals(courseNumber)).findFirst();
         Course course = optional.orElseThrow();
-        Lecturer lecturer = Main.lecturerMatchData.get(new CampusMatchKey(course, campus));
+        Lecturer lecturer = AoneMain.lecturerMatchData.get(new CampusMatchKey(course, campus));
         System.out.println("Lecturer's Name: " + lecturer.getName());
-        List<CampusMatchKey> keyList = Main.courseMatchData.get(lecturer.getId());
+        List<CampusMatchKey> keyList = AoneMain.courseMatchData.get(lecturer.getId());
         System.out.println("This lecturer is teaching "+ keyList.size()+" paper(s)");
     }
 }
