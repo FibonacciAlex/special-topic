@@ -45,11 +45,12 @@ public class Matrix {
 
     public String printMatrix(){
         StringBuilder str = new StringBuilder();
-        Node node = data.getFirst();
+        Node node = data.isEmpty() ? null : data.getFirst();
         for (int i = 0; i <rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (node != null && (i == node.row && j == node.column)){
                     str.append(node.value).append(" ");
+                    node = node.next;
                 } else {
                     str.append("0 ");
                 }
@@ -61,6 +62,6 @@ public class Matrix {
 
     @Override
     public String toString() {
-        return  title +" " +getDataStr()+"\n"+ printMatrix();
+        return  title +": " +getDataStr()+"\n"+ printMatrix();
     }
 }
