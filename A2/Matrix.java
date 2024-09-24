@@ -2,12 +2,12 @@
 
 public class Matrix {
 
-    private String title;
+    private final String title;
 
-    private int rows;
-    private int cols;
+    private final int rows;
+    private final int cols;
 
-    private SinglyLinkedList data;
+    private final SinglyLinkedList data;
 
     public Matrix(String title, int rows, int cols, SinglyLinkedList data) {
         this.title = title;
@@ -35,7 +35,7 @@ public class Matrix {
         }
         StringBuilder str = new StringBuilder();
         Node pre = data.head;
-        while (pre != null){
+        while (pre != null && pre.value != 0){
             str.append(pre.value).append(" ");
             pre = pre.next;
         }
