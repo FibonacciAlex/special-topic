@@ -1,4 +1,4 @@
-import java.util.LinkedList;
+
 
 public class Matrix {
 
@@ -7,9 +7,9 @@ public class Matrix {
     private int rows;
     private int cols;
 
-    private LinkedList<Node> data;
+    private SinglyLinkedList data;
 
-    public Matrix(String title, int rows, int cols, LinkedList<Node> data) {
+    public Matrix(String title, int rows, int cols, SinglyLinkedList data) {
         this.title = title;
         this.rows = rows;
         this.cols = cols;
@@ -24,17 +24,17 @@ public class Matrix {
         return cols;
     }
 
-    public LinkedList<Node> getData() {
+    public SinglyLinkedList getData() {
         return data;
     }
 
     public String getDataStr(){
 
-        if(data.isEmpty()){
+        if(data.head == null){
             return "";
         }
         StringBuilder str = new StringBuilder();
-        Node pre = data.getFirst();
+        Node pre = data.head;
         while (pre != null){
             str.append(pre.value).append(" ");
             pre = pre.next;
@@ -45,7 +45,7 @@ public class Matrix {
 
     public String printMatrix(){
         StringBuilder str = new StringBuilder();
-        Node node = data.isEmpty() ? null : data.getFirst();
+        Node node = data.head;
         for (int i = 0; i <rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (node != null && (i == node.row && j == node.column)){

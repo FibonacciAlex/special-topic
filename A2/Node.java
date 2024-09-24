@@ -6,6 +6,11 @@ public class Node {
     int column;
     int value;
 
+    /**
+     * pointer to the next node
+     */
+    Node next;
+
 
     public Node(int row, int column, int value) {
         this.row = row;

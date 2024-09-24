@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -13,7 +12,7 @@ public class AssignmentTwoMain {
     public static void main(String[] args) throws Exception {
 
         String currentPath = System.getProperty("user.dir");
-        System.out.println("Current Working Directory: " + currentPath);
+//        System.out.println("Current Working Directory: " + currentPath);
 
         String filePath1 = currentPath + "/A2/matrix1.txt"; // matrix 1 file relative path
         String filePath2 = currentPath + "/A2/matrix2.txt"; // matrix 2 file relative path
@@ -50,17 +49,12 @@ public class AssignmentTwoMain {
 
         int row = m1.getRows();
         int col = m1.getCols();
-        Node node1=null;
+        Node node1 = m1.getData().head;
         Node pre = null;
-        Node node2=null;
-        if(!m1.getData().isEmpty()){
-            node1 = m1.getData().getFirst();
-        }
-        if(!m2.getData().isEmpty()){
-            node2 = m2.getData().getFirst();
-        }
+        Node node2 = m2.getData().head;
 
-        LinkedList<Node> mergeNodes = new LinkedList<>();
+        //container of new data list after operation
+        SinglyLinkedList mergeNodes = new SinglyLinkedList();
 
 
         boolean end = false;
@@ -71,8 +65,7 @@ public class AssignmentTwoMain {
                 case -1:
                     // n1 ahead of n2, use n1
                     if(node1 != null){
-                        newNode = new Node(node1.row, node1.column, node1.value);
-                        mergeNodes.add(newNode);
+                        newNode = mergeNodes.addNodeToEnd(node1.row, node1.column, node1.value);
                         node1 = node1.next;
                     }
                     break;
@@ -80,9 +73,8 @@ public class AssignmentTwoMain {
                     // n1 same position of n2, combine them
                     if(node1 != null && node2 != null){
                         int value = node1.value + node2.value;
-                        newNode = new Node(node1.row, node1.column, value);
-                        mergeNodes.add(newNode);
-                        //move the pointer to the next one
+                        newNode = mergeNodes.addNodeToEnd(node1.row, node1.column, value);
+                        //move all the pointers to the next one
                         node1 = node1.next;
                         node2 = node2.next;
                     }
@@ -90,8 +82,7 @@ public class AssignmentTwoMain {
                 case 1:
                     //n2 ahead of n1, use n2
                     if(node2 != null){
-                        newNode = new Node(node2.row, node2.column, node2.value);
-                        mergeNodes.add(newNode);
+                        newNode = mergeNodes.addNodeToEnd(node2.row, node2.column, node2.value);
                         node2 = node2.next;
                     }
                     break;
@@ -148,9 +139,8 @@ public class AssignmentTwoMain {
 
     private static Matrix createMatrixFromFile(String path, String title) throws Exception{
         int row = 0, col = 0;
-        LinkedList<Node> data = new LinkedList<>();
+        SinglyLinkedList data = new SinglyLinkedList();
         List<String> lines;
-        Node pre = null;
         try {
             lines = Files.readAllLines(Paths.get(path));
         } catch (IOException e) {
@@ -174,12 +164,8 @@ public class AssignmentTwoMain {
                     //skip 0 value
                     continue;
                 }
-                Node n = new Node(i - 1, j, v);
-                data.add(n);
-                if(pre != null){
-                    pre.setNext(n);
-                }
-                pre = n;
+                data.addNodeToEnd(i - 1, j, v);
+
             }
         }
 
